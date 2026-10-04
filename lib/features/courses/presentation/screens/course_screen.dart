@@ -4,7 +4,7 @@ import 'package:student_app_project/core/extentions/app_drawer.dart';
 import 'package:student_app_project/features/courses/presentation/providers/course_provider.dart';
 import 'package:student_app_project/core/extentions/snack_bar_messages.dart';
 import 'package:go_router/go_router.dart';
-import 'package:student_app_project/services/api_services.dart';
+import 'package:student_app_project/api/services/api_services.dart';
 
 class CourseScreen extends ConsumerWidget {
   const CourseScreen({super.key});
@@ -28,17 +28,6 @@ class CourseScreen extends ConsumerWidget {
             },
             icon: const Icon(Icons.calendar_month),
             tooltip: 'Semesters',
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              try {
-                final courses = await getCourses();
-                print(courses);
-              } catch (e) {
-                print(e);
-              }
-            },
-            child: Text('Print courses'),
           ),
         ],
       ),
