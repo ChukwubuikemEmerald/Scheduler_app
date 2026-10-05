@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:student_app_project/features/courses/data/model/course.dart';
 
-class ApiService {
-  ApiService();
+class CourseApiDataSource {
+  CourseApiDataSource();
 
   final URL = 'http://10.223.21.123:8000/api/courses';
 
