@@ -4,7 +4,6 @@ import 'package:student_app_project/core/extentions/app_drawer.dart';
 import 'package:student_app_project/features/courses/presentation/providers/course_provider.dart';
 import 'package:student_app_project/core/extentions/snack_bar_messages.dart';
 import 'package:go_router/go_router.dart';
-import 'package:student_app_project/api/services/api_services.dart';
 
 class CourseScreen extends ConsumerWidget {
   const CourseScreen({super.key});
