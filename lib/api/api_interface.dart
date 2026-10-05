@@ -1,6 +1,6 @@
 import 'package:student_app_project/features/courses/data/model/course.dart';
 
-abstract interface class CourseApiDataSource {
+abstract interface class CourseApiRepositoryImpl {
   Future<List<Course>> getCourses();
 
   Future<Course> getCourse(int id);

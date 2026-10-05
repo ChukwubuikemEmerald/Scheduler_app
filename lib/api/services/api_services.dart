@@ -2,33 +2,33 @@ import 'package:student_app_project/api/api_interface.dart';
 import 'package:student_app_project/api/data/api_data_source.dart';
 import 'package:student_app_project/features/courses/data/model/course.dart';
 
-class CourseApiRepoimpl implements CourseApiDataSource {
+class CourseRepository implements CourseApiRepositoryImpl {
   final CourseApiDataSource apiDataSource;
 
-  CourseApiRepoimpl({required this.apiService});
+  CourseRepository({required this.apiDataSource});
 
   @override
   Future<List<Course>> getCourses() {
-    return apiService.getCourses();
+    return apiDataSource.getCourses();
   }
 
   @override
   Future<Course> getCourse(int id) {
-    return apiService.getCourse(id);
+    return apiDataSource.getCourse(id);
   }
 
   @override
   Future<int> insertCourse(Course course) {
-    return apiService.insertCourse(course);
+    return apiDataSource.insertCourse(course);
   }
 
   @override
   Future<void> updateCourse(Course course) {
-    return apiService.updateCourse(course);
+    return apiDataSource.updateCourse(course);
   }
 
   @override
   Future<void> deleteCourse(int id) {
-    return apiService.deleteCourse(id);
+    return apiDataSource.deleteCourse(id);
   }
 }
