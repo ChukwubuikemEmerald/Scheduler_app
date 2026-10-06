@@ -2,10 +2,10 @@ import 'package:student_app_project/api/api_interface.dart';
 import 'package:student_app_project/api/data/api_data_source.dart';
 import 'package:student_app_project/features/courses/data/model/course.dart';
 
-class CourseRepository implements CourseApiRepositoryImpl {
+class CourseAPIRepository implements CourseApiRepositoryImpl {
   final CourseApiDataSource apiDataSource;
 
-  CourseRepository({required this.apiDataSource});
+  CourseAPIRepository({required this.apiDataSource});
 
   @override
   Future<List<Course>> getCourses() {

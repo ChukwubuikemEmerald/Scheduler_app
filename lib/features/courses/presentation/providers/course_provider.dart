@@ -1,11 +1,25 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:student_app_project/api/data/api_data_source.dart';
+import 'package:student_app_project/api/services/api_services.dart';
 import 'package:student_app_project/features/courses/data/data_sources/course_data_source.dart';
 import 'package:student_app_project/core/database/database_helper.dart';
 import 'package:student_app_project/features/courses/data/data_sources/datasource_interface.dart';
 import 'package:student_app_project/features/courses/data/model/course.dart';
 import 'package:student_app_project/features/courses/data/repositories/course_repository_impl.dart';
+
+final apiDataSourceProvider = Provider<CourseApiDataSource>((ref) {
+  return CourseApiDataSource();
+});
+
+final courseAPIRepositoryProvider = FutureProvider<CourseAPIRepository>((
+  ref,
+) async {
+  final apiDataSource = ref.watch(apiDataSourceProvider);
+
+  return CourseAPIRepository(apiDataSource: apiDataSource);
+});
 
 final databaseHelperProvider = Provider<DatabaseHelper>((ref) {
   return DatabaseHelper();
@@ -43,7 +57,7 @@ class CourseNotifier extends AsyncNotifier<List<Course>> {
 
   Future<void> addCourse(Course course) async {
     try {
-      final repository = await ref.read(courseRepositoryProvider.future);
+      final repository = await ref.read(courseAPIRepositoryProvider.future);
       await repository.insertCourse(course);
       ref.invalidateSelf();
     } catch (error, stackTrace) {
@@ -55,7 +69,7 @@ class CourseNotifier extends AsyncNotifier<List<Course>> {
 
   Future<void> updateCourse(Course course) async {
     try {
-      final repository = await ref.read(courseRepositoryProvider.future);
+      final repository = await ref.read(courseAPIRepositoryProvider.future);
       await repository.updateCourse(course);
       ref.invalidateSelf();
     } catch (error, stackTrace) {
@@ -71,7 +85,7 @@ class CourseNotifier extends AsyncNotifier<List<Course>> {
         throw ArgumentError('Cannot delete a course without an ID.');
       }
 
-      final repository = await ref.read(courseRepositoryProvider.future);
+      final repository = await ref.read(courseAPIRepositoryProvider.future);
       await repository.deleteCourse(course.id!);
       ref.invalidateSelf();
     } catch (error, stackTrace) {
