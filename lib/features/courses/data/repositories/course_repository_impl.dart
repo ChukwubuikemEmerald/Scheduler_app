@@ -13,6 +13,11 @@ class CourseRepositoryImpl implements CourseRepository {
   }
 
   @override
+  Future<Course> getCourse(int id) {
+    return dataSource.getCourse(id);
+  }
+
+  @override
   Future<int> insertCourse(Course course) {
     return dataSource.insertCourse(course);
   }
