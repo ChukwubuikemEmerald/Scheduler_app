@@ -10,6 +10,20 @@ class CourseDataSource {
     return courses.map((course) => Course.fromMap(course)).toList();
   }
 
+  Future<Course> getCourse(int id) async {
+    final courses = await database.query(
+      'courses',
+      where: 'id =?',
+      whereArgs: [id],
+    );
+
+    if (courses.isEmpty) {
+      throw Exception('Course not found');
+    }
+
+    return Course.fromMap(courses.first);
+  }
+
   Future<int> insertCourse(Course course) async {
     return await database.insert('courses', course.toMap());
   }
