@@ -1,5 +1,6 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
 
 class DatabaseHelper {
   final String databaseName;
@@ -40,6 +41,7 @@ class DatabaseHelper {
         await db.execute('''
           CREATE TABLE courses(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            sync_id TEXT NOT NULL UNIQUE,
             semesterId INTEGER,
             code TEXT NOT NULL UNIQUE,
             name TEXT NOT NULL,
@@ -267,6 +269,25 @@ class DatabaseHelper {
           }
 
           await db.execute('DROP TABLE schedules_old');
+        }
+
+        //VERSION 7 DATABASE MIGRATION
+
+        if (oldVersion < 7) {
+          await db.execute('ALTER TABLE courses ADD COLUMN sync_id TEXT');
+
+          final uuid = Uuid();
+
+          final courses = await db.query('courses');
+
+          for (final course in courses) {
+            await db.update(
+              'courses',
+              {'sync_id': uuid.v4()},
+              where: 'id = ?',
+              whereArgs: [course['id']],
+            );
+          }
         }
       },
     );
