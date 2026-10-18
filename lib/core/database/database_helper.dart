@@ -20,7 +20,7 @@ class DatabaseHelper {
 
     return openDatabase(
       path,
-      version: 7,
+      version: 8,
 
       // Enable foreign-key enforcement.
       onConfigure: (db) async {
@@ -288,6 +288,57 @@ class DatabaseHelper {
               whereArgs: [course['id']],
             );
           }
+        }
+        // VERSION 8 MIGRATION
+        // Add sync IDs to semesters and schedules.
+        // Ensure all three tables have unique sync IDs.
+
+        if (oldVersion < 8) {
+          await db.execute('ALTER TABLE semesters ADD COLUMN sync_id TEXT');
+
+          await db.execute('ALTER TABLE schedules ADD COLUMN sync_id TEXT');
+
+          final uuid = Uuid();
+
+          // Backfill existing semesters.
+          final semesters = await db.query('semesters');
+
+          for (final semester in semesters) {
+            await db.update(
+              'semesters',
+              {'sync_id': uuid.v4()},
+              where: 'id = ?',
+              whereArgs: [semester['id']],
+            );
+          }
+
+          // Backfill existing schedules.
+          final schedules = await db.query('schedules');
+
+          for (final schedule in schedules) {
+            await db.update(
+              'schedules',
+              {'sync_id': uuid.v4()},
+              where: 'id = ?',
+              whereArgs: [schedule['id']],
+            );
+          }
+
+          // Enforce uniqueness for sync IDs on all three tables.
+          await db.execute('''
+    CREATE UNIQUE INDEX courses_sync_id_unique
+    ON courses(sync_id)
+  ''');
+
+          await db.execute('''
+    CREATE UNIQUE INDEX semesters_sync_id_unique
+    ON semesters(sync_id)
+  ''');
+
+          await db.execute('''
+    CREATE UNIQUE INDEX schedules_sync_id_unique
+    ON schedules(sync_id)
+  ''');
         }
       },
     );
