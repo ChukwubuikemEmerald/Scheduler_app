@@ -16,18 +16,18 @@ class Course {
   }) : syncId = syncId ?? Uuid().v4();
 
   Map<String, dynamic> toMap() => {
-    'id': id,
-    'sync_id': syncId,
-    'semesterId': semesterId,
-    'code': code,
-    'name': name,
-  };
+        'id': id,
+        'sync_id': syncId,
+        'semesterId': semesterId,
+        'code': code,
+        'name': name,
+      };
 
   factory Course.fromMap(Map<String, dynamic> map) => Course(
-    id: map['id'] as int?,
-    syncId: map['syncId'] as String?,
-    semesterId: map['semesterId'] as int?,
-    code: map['code'] as String,
-    name: map['name'] as String,
-  );
+        id: map['id'] as int?,
+        syncId: map['sync_id'] as String,
+        semesterId: map['semesterId'] as int?,
+        code: map['code'] as String,
+        name: map['name'] as String,
+      );
 }

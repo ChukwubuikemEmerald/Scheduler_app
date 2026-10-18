@@ -34,7 +34,8 @@ class DatabaseHelper {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE,
             startDate TEXT NOT NULL,
-            endDate TEXT NOT NULL
+            endDate TEXT NOT NULL,
+            sync_id TEXT NOT NULL UNIQUE
           )
         ''');
 
@@ -50,7 +51,7 @@ class DatabaseHelper {
         ''');
 
         await db.execute('''
-  CREATE TABLE schedules(
+CREATE TABLE schedules (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   courseId INTEGER,
   title TEXT NOT NULL,
@@ -60,6 +61,7 @@ class DatabaseHelper {
   endTime INTEGER NOT NULL,
   location TEXT,
   type TEXT NOT NULL,
+  sync_id TEXT NOT NULL UNIQUE,
 
   FOREIGN KEY (courseId)
     REFERENCES courses(id)
@@ -69,6 +71,7 @@ class DatabaseHelper {
   CHECK (startTime BETWEEN 0 AND 1439),
   CHECK (endTime BETWEEN 1 AND 1440),
   CHECK (endTime > startTime)
+)
 ''');
       },
 
