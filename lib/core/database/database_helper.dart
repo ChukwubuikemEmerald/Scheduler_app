@@ -30,13 +30,13 @@ class DatabaseHelper {
       // Fresh installation.
       onCreate: (db, version) async {
         await db.execute('''
-          CREATE TABLE semesters(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL UNIQUE,
-            startDate TEXT NOT NULL,
-            endDate TEXT NOT NULL,
-            sync_id TEXT NOT NULL UNIQUE
-          )
+         CREATE TABLE semesters (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE,
+        startDate TEXT NOT NULL,
+        endDate TEXT NOT NULL,
+        sync_id TEXT NOT NULL UNIQUE
+)
         ''');
 
         await db.execute('''

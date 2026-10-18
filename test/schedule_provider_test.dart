@@ -16,7 +16,7 @@ void main() {
   setUp(() {
     service = MockScheduleService();
 
-    mathematics = const Schedule(
+    mathematics =  Schedule(
       id: 1,
       courseId: 10,
       title: 'Mathematics',
@@ -28,7 +28,7 @@ void main() {
       type: ScheduleType.lecture,
     );
 
-    physics = const Schedule(
+    physics =  Schedule(
       id: 2,
       courseId: 11,
       title: 'Physics',

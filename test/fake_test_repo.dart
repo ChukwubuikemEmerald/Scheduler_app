@@ -22,6 +22,11 @@ class FakeCourseRepository implements CourseRepository {
   }
 
   @override
+  Future<Course> getCourse(int id) async {
+    return _courses.firstWhere((course) => course.id == id);
+  }
+
+  @override
   Future<void> updateCourse(Course course) async {
     final index = _courses.indexWhere((c) => c.id == course.id);
     if (index != -1) {
@@ -50,6 +55,11 @@ class FailingCourseRepository implements CourseRepository {
 
   @override
   Future<void> updateCourse(Course course) async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Course> getCourse(int id) async {
     throw UnimplementedError();
   }
 
