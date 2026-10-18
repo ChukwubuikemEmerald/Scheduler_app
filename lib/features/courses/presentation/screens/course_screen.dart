@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:student_app_project/core/extentions/app_drawer.dart';
+//table course debbug
+import 'package:student_app_project/debug/inspect_database.dart';
 import 'package:student_app_project/features/courses/presentation/providers/course_provider.dart';
 import 'package:student_app_project/core/extentions/snack_bar_messages.dart';
 import 'package:go_router/go_router.dart';
@@ -21,6 +23,11 @@ class CourseScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Courses'),
         actions: [
+          ElevatedButton(
+            onPressed: inspectDatabase,
+            child: const Text('Inspect Database'),
+          ),
+
           IconButton(
             onPressed: () {
               context.push('/semester');

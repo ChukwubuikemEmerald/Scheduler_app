@@ -20,7 +20,7 @@ class DatabaseHelper {
 
     return openDatabase(
       path,
-      version: 4,
+      version: 7,
 
       // Enable foreign-key enforcement.
       onConfigure: (db) async {
