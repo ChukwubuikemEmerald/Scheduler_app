@@ -20,7 +20,7 @@ class DatabaseHelper {
 
     return openDatabase(
       path,
-      version: 8,
+      version: 9,
 
       // Enable foreign-key enforcement.
       onConfigure: (db) async {
@@ -73,6 +73,7 @@ CREATE TABLE schedules (
   CHECK (endTime > startTime)
 )
 ''');
+        await _createSyncOutbox(db);
       },
 
       // Existing database upgrades.
@@ -343,8 +344,39 @@ CREATE TABLE schedules (
     ON schedules(sync_id)
   ''');
         }
+
+        // VERSION 9 MIGRATION
+        // Introduce the local sync outbox.
+
+        if (oldVersion < 9) {
+          await _createSyncOutbox(db);
+        }
       },
     );
+  }
+
+  Future<void> _createSyncOutbox(DatabaseExecutor db) async {
+    await db.execute('''
+    CREATE TABLE sync_outbox (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+      entity_type TEXT NOT NULL
+        CHECK (entity_type IN ('semester', 'course', 'schedule')),
+
+      sync_id TEXT NOT NULL,
+
+      operation TEXT NOT NULL
+        CHECK (operation IN ('upsert', 'delete')),
+
+      payload TEXT,
+
+      created_at TEXT NOT NULL,
+
+      attempts INTEGER NOT NULL DEFAULT 0,
+
+      last_error TEXT
+    )
+  ''');
   }
 
   Future<void> close() async {
