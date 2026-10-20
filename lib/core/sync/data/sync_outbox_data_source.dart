@@ -15,19 +15,69 @@ class SyncOutboxDataSource {
     Map<String, dynamic>? payload,
   }) async {
     if (syncId.trim().isEmpty) {
-      throw ArgumentError.value(syncId, 'syncId', 'Sync ID cannot be empty.');
+      throw ArgumentError.value(
+        syncId,
+        'syncId',
+        'Sync ID cannot be empty.',
+      );
     }
 
     if (operation == SyncOperation.upsert && payload == null) {
       throw ArgumentError('An upsert operation requires a payload.');
     }
 
-    return await executor.insert('sync_outbox', {
+    return executor.insert('sync_outbox', {
       'entity_type': entityType.name,
       'sync_id': syncId,
       'operation': operation.name,
       'payload': payload == null ? null : jsonEncode(payload),
       'created_at': DateTime.now().toUtc().toIso8601String(),
     });
+  }
+
+  Future<List<Map<String, dynamic>>> getPending({
+    required DatabaseExecutor executor,
+    int limit = 50,
+  }) async {
+    if (limit <= 0) {
+      throw ArgumentError.value(limit, 'limit', 'Must be greater than zero.');
+    }
+
+    return executor.query(
+      'sync_outbox',
+      orderBy: 'id ASC',
+      limit: limit,
+    );
+  }
+
+  Future<int> markSynced({
+    required DatabaseExecutor executor,
+    required int id,
+  }) {
+    return executor.delete(
+      'sync_outbox',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<int> recordFailure({
+    required DatabaseExecutor executor,
+    required int id,
+    required String error,
+  }) {
+    final message = error.length > 2000
+        ? error.substring(0, 2000)
+        : error;
+
+    return executor.rawUpdate(
+      '''
+      UPDATE sync_outbox
+      SET attempts = attempts + 1,
+          last_error = ?
+      WHERE id = ?
+      ''',
+      [message, id],
+    );
   }
 }
