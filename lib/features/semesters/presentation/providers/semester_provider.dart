@@ -6,6 +6,7 @@ import 'package:student_app_project/features/semesters/data/models/semester.dart
 import 'package:student_app_project/features/semesters/data/repositories/semester_repository_impl.dart';
 import 'package:student_app_project/features/semesters/domain/semester_repository.dart';
 
+
 final semesterDataSourceProvider = Provider<SemesterDataSource>((ref) {
   final databaseHelper = ref.watch(databaseHelperProvider);
 
