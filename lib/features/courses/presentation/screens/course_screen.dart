@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:student_app_project/core/extentions/app_drawer.dart';
+import 'package:student_app_project/core/sync/presentation/widgets/sync_now_button.dart';
 //table course debbug
 import 'package:student_app_project/debug/inspect_database.dart';
 import 'package:student_app_project/features/courses/presentation/providers/course_provider.dart';
@@ -20,6 +21,7 @@ class CourseScreen extends ConsumerWidget {
         },
         child: Icon(Icons.add),
       ),
+
       appBar: AppBar(
         title: const Text('Courses'),
         actions: [
@@ -27,6 +29,7 @@ class CourseScreen extends ConsumerWidget {
             onPressed: inspectDatabase,
             child: const Text('Inspect Database'),
           ),
+          SyncNowButton(),
 
           IconButton(
             onPressed: () {

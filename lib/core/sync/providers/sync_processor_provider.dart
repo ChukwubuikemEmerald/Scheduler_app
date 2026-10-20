@@ -9,7 +9,7 @@ final syncProcessorProvider = FutureProvider<SyncProcessor>((ref) async {
 
   final processor = SyncProcessor(
     database: database,
-    baseUrl: 'http://10.223.21.123:8000',
+    baseUrl: 'http://127.0.0.1:8000',
   );
 
   ref.onDispose(processor.close);
