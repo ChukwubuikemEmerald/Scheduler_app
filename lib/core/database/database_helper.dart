@@ -20,7 +20,7 @@ class DatabaseHelper {
 
     return openDatabase(
       path,
-      version: 9,
+      version: 10,
 
       // Enable foreign-key enforcement.
       onConfigure: (db) async {
@@ -73,6 +73,13 @@ CREATE TABLE schedules (
   CHECK (endTime > startTime)
 )
 ''');
+        await db.execute('''
+  CREATE TABLE sync_metadata (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+  )
+''');
+
         await _createSyncOutbox(db);
       },
 
@@ -350,6 +357,16 @@ CREATE TABLE schedules (
 
         if (oldVersion < 9) {
           await _createSyncOutbox(db);
+        }
+
+        //version 10 MIGRATION  
+        if (oldVersion < 10) {
+          await db.execute('''
+    CREATE TABLE IF NOT EXISTS sync_metadata (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    )
+  ''');
         }
       },
     );
