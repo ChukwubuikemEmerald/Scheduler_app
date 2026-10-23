@@ -15,11 +15,7 @@ class SyncOutboxDataSource {
     Map<String, dynamic>? payload,
   }) async {
     if (syncId.trim().isEmpty) {
-      throw ArgumentError.value(
-        syncId,
-        'syncId',
-        'Sync ID cannot be empty.',
-      );
+      throw ArgumentError.value(syncId, 'syncId', 'Sync ID cannot be empty.');
     }
 
     if (operation == SyncOperation.upsert && payload == null) {
@@ -39,13 +35,26 @@ class SyncOutboxDataSource {
     required DatabaseExecutor executor,
     int limit = 50,
   }) async {
-    if (limit <= 0) {
-      throw ArgumentError.value(limit, 'limit', 'Must be greater than zero.');
-    }
-
     return executor.query(
       'sync_outbox',
-      orderBy: 'id ASC',
+      orderBy: '''
+      CASE
+        WHEN entity_type = 'semester'
+          AND operation = 'upsert' THEN 0
+        WHEN entity_type = 'course'
+          AND operation = 'upsert' THEN 1
+        WHEN entity_type = 'schedule'
+          AND operation = 'upsert' THEN 2
+        WHEN entity_type = 'schedule'
+          AND operation = 'delete' THEN 3
+        WHEN entity_type = 'course'
+          AND operation = 'delete' THEN 4
+        WHEN entity_type = 'semester'
+          AND operation = 'delete' THEN 5
+        ELSE 6
+      END ASC,
+      id ASC
+    ''',
       limit: limit,
     );
   }
@@ -54,11 +63,7 @@ class SyncOutboxDataSource {
     required DatabaseExecutor executor,
     required int id,
   }) {
-    return executor.delete(
-      'sync_outbox',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return executor.delete('sync_outbox', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<int> recordFailure({
@@ -66,9 +71,7 @@ class SyncOutboxDataSource {
     required int id,
     required String error,
   }) {
-    final message = error.length > 2000
-        ? error.substring(0, 2000)
-        : error;
+    final message = error.length > 2000 ? error.substring(0, 2000) : error;
 
     return executor.rawUpdate(
       '''
