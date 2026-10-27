@@ -22,8 +22,18 @@ class SyncOutboxDataSource {
       throw ArgumentError('An upsert operation requires a payload.');
     }
 
+    final entityTypeName = entityType.name;
+
+    // Remove older pending operations for this exact entity.
+    await executor.delete(
+      'sync_outbox',
+      where: 'entity_type = ? AND sync_id = ?',
+      whereArgs: [entityTypeName, syncId],
+    );
+
+    // Insert the latest requested operation.
     return executor.insert('sync_outbox', {
-      'entity_type': entityType.name,
+      'entity_type': entityTypeName,
       'sync_id': syncId,
       'operation': operation.name,
       'payload': payload == null ? null : jsonEncode(payload),
